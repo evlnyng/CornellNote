@@ -37,12 +37,19 @@
 
             #summary { grid-area: summary; }
 
+            button {
+                float:right;
+            }
 
         </style>
     </head>
 
     <body>
-        <h1 id ="title" style="color: black;" contenteditable></h1>
+        <div>
+            <button onclick="resetNote()">Clear</button>    
+            <h1 id ="title" style="color: black;" contenteditable></h1>
+        </div>
+
         <div class="grid-container">
             <div id="cues" contenteditable></div>
             <div id="main" contenteditable></div>
@@ -54,21 +61,40 @@
 
             window.addEventListener('DOMContentLoaded', (event) => {
                 fs.readFile('/title', 'utf8', (err, data) => {
-                    document.querySelector('#title').innerHTML = err ? 'My Notes' : data; 
+                    if(err) {
+                        console.log(err);
+                    }
+                    document.querySelector('#title').innerHTML = !data ? 'My Notes' : data; 
                 });
                 fs.readFile('/cues', 'utf8', (err, data) => {
-                    document.querySelector('#cues').innerHTML = err ? 'This section helps you review your notes. After class, write down key concepts you need to remember and add a prompt for each. You can also use this section for terminology and study questions.' : data; 
+                    if(err) {
+                        console.log(err);
+                    }
+                    document.querySelector('#cues').innerHTML = !data ? 'This section helps you review your notes. After class, write down key concepts you need to remember and add a prompt for each. You can also use this section for terminology and study questions.' : data; 
                 });
 
                 fs.readFile('/main', 'utf8', (err, data) => {
-                    document.querySelector('#main').innerHTML = err ? 'Use this section to take notes during class.' : data; 
+                    if(err) {
+                        console.log(err);
+                    }
+                    document.querySelector('#main').innerHTML = !data ? 'Use this section to take notes during class.' : data; 
                 });
 
                 fs.readFile('/summary', 'utf8', (err, data) => {
-                    document.querySelector('#summary').innerHTML = err ? 'Write a summary of the main points here.' : data; 
+                    if(err) {
+                        console.log(err);
+                    }
+                    document.querySelector('#summary').innerHTML = !data ? 'Write a summary of the main points here.' : data; 
                 })
                 
             });
+
+            function resetNote() {
+                document.querySelector("#title").innerHTML = ""; 
+                document.querySelector("#main").innerHTML = ""; 
+                document.querySelector("#cues").innerHTML = "";
+                document.querySelector("#summary").innerHTML = "";
+            }
 
             var saveInterval = window.setInterval(function () {
                 fs.writeFile('/title', document.querySelector('#title').innerHTML, function(err) {
@@ -99,6 +125,8 @@
                     }
                 });
             }, 1000);
+
+
         </script>
     </body>
 </html>
