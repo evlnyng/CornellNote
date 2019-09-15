@@ -1,150 +1,164 @@
 <!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <link href="https://fonts.googleapis.com/css?family=Gochi+Hand&display=swap" rel="stylesheet">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
-        <title>Cornell Method Notetaking App</title>       
-        <style>
-            body {
-                font-family:'Gochi Hand';
-                color: grey;
-            }
-            html, body, .grid-container { height: 100%; margin: 0; }
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Gochi+Hand&display=swap" rel="stylesheet">
+    <script crossorigin="anonymous"
+            integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"></script>
+    <title>Cornell Method Notetaking App</title>
+    <style>
+        body {
+            font-family: 'Gochi Hand';
+            color: grey;
+        }
 
-            .grid-container * { 
+        html, body, .grid-container {
+            height: 100%;
+            margin: 0;
+        }
+
+        .grid-container * {
             border-top: 1px solid blue;
             border-right: 1px solid red;
             position: relative;
-            }
+        }
 
-            .grid-container *:after { 
-            content:attr(class);
+        .grid-container *:after {
+            content: attr(class);
             position: absolute;
             top: 0;
             left: 0;
-            }
+        }
 
-            .grid-container {
+        .grid-container {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr;
             grid-template-rows: 1fr 1fr 1fr;
             grid-template-areas: "cues main main main" "cues main main main" "summary summary summary summary";
-            }
+        }
 
-            #cues { grid-area: cues; }
+        #cues {
+            grid-area: cues;
+        }
 
-            #main { grid-area: main; }
+        #main {
+            grid-area: main;
+        }
 
-            #summary { grid-area: summary; }
+        #summary {
+            grid-area: summary;
+        }
 
-            button {
-                float:right;
-            }
+        button {
+            float: right;
+        }
 
-        </style>
-    </head>
+    </style>
+</head>
 
-    <body>
-        <div>
-            <button onclick="resetNote()">Clear</button>    
-            <h1 id ="title" style="color: black;" contenteditable></h1>
-        </div>
-        <div>
-            <button onclick="printPDF()">Print PDF</button>
-            <h1 id ="pdf" style="color: black;" contenteditable></h1>
-        </div>
-        <div class="grid-container">
-            <div id="cues" contenteditable></div>
-            <div id="main" contenteditable></div>
-            <div id="summary" contenteditable></div>
-        </div>
-        <script src="https://unpkg.com/filer/dist/filer.min.js"></script>
-        <script>
-            const fs = new Filer.FileSystem();
+<body>
+<div>
+    <button onclick="resetNote()">Clear</button>
+    <h1 contenteditable id="title" style="color: black;"></h1>
+</div>
+<div>
+    <button onclick="printPDF()">Print PDF</button>
+    <h1 contenteditable id="pdf" style="color: black;"></h1>
+</div>
+<div class="grid-container">
+    <div contenteditable id="cues"></div>
+    <div contenteditable id="main"></div>
+    <div contenteditable id="summary"></div>
+</div>
+<script src="https://unpkg.com/filer/dist/filer.min.js"></script>
+<script>
+  const fs = new Filer.FileSystem();
 
-            window.addEventListener('DOMContentLoaded', (event) => {
-                fs.readFile('/title', 'utf8', (err, data) => {
-                    if(err) {
-                        console.log(err);
-                    }
-                    document.querySelector('#title').innerHTML = !data ? 'My Notes' : data; 
-                });
-                fs.readFile('/cues', 'utf8', (err, data) => {
-                    if(err) {
-                        console.log(err);
-                    }
-                    document.querySelector('#cues').innerHTML = !data ? 'This section helps you review your notes. After class, write down key concepts you need to remember and add a prompt for each. You can also use this section for terminology and study questions.' : data; 
-                });
+  window.addEventListener('DOMContentLoaded', (event) => {
+    fs.readFile('/title', 'utf8', (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+      document.querySelector('#title').innerHTML = !data ? 'My Notes' : data;
+    });
+    fs.readFile('/cues', 'utf8', (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+      document.querySelector('#cues').innerHTML = !data ?
+          'This section helps you review your notes. After class, write down key concepts you need to remember and add a prompt for each. You can also use this section for terminology and study questions.' :
+          data;
+    });
 
-                fs.readFile('/main', 'utf8', (err, data) => {
-                    if(err) {
-                        console.log(err);
-                    }
-                    document.querySelector('#main').innerHTML = !data ? 'Use this section to take notes during class.' : data; 
-                });
+    fs.readFile('/main', 'utf8', (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+      document.querySelector('#main').innerHTML = !data ? 'Use this section to take notes during class.' : data;
+    });
 
-                fs.readFile('/summary', 'utf8', (err, data) => {
-                    if(err) {
-                        console.log(err);
-                    }
-                    document.querySelector('#summary').innerHTML = !data ? 'Write a summary of the main points here.' : data; 
-                })
-                
-            });
+    fs.readFile('/summary', 'utf8', (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+      document.querySelector('#summary').innerHTML = !data ? 'Write a summary of the main points here.' : data;
+    });
 
-            function printPDF() {
-                // Default export is a4 paper, portrait, using milimeters for units
-              var doc = new jsPDF();
-              var textToPrint = `
-              Title: ${document.querySelector("#title").innerHTML} \n
-              Main: ${document.querySelector("#main").innerHTML} \n
-              Cues: ${document.querySelector("#cues").innerHTML} \n
-              Summary ${document.querySelector("#summary").innerHTML} \n
+  });
+
+  function printPDF() {
+    // Default export is a4 paper, portrait, using milimeters for units
+    var doc = new jsPDF();
+    var textToPrint = `
+              Title: ${document.querySelector('#title').innerHTML} \n
+              Main: ${document.querySelector('#main').innerHTML} \n
+              Cues: ${document.querySelector('#cues').innerHTML} \n
+              Summary ${document.querySelector('#summary').innerHTML} \n
               ~
               `;
-              doc.text(textToPrint, 10, 10);
-              doc.save('CornellNote.pdf')
-            }
+    doc.text(textToPrint, 10, 10);
+    doc.save('CornellNote.pdf');
+  }
 
-            function resetNote() {
-                document.querySelector("#title").innerHTML = ""; 
-                document.querySelector("#main").innerHTML = "";
-                document.querySelector("#cues").innerHTML = "";
-                document.querySelector("#summary").innerHTML = "";
-            }
+  function resetNote() {
+    document.querySelector('#title').innerHTML = '';
+    document.querySelector('#main').innerHTML = '';
+    document.querySelector('#cues').innerHTML = '';
+    document.querySelector('#summary').innerHTML = '';
+  }
 
-            var saveInterval = window.setInterval(function () {
-                fs.writeFile('/title', document.querySelector('#title').innerHTML, function(err) {
-                    if(err) {
-                        console.log(err);
-                        throw err;
-                    }
-                });
+  var saveInterval = window.setInterval(function() {
+    fs.writeFile('/title', document.querySelector('#title').innerHTML, function(err) {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+    });
 
-                fs.writeFile('/main', document.querySelector('#main').innerHTML, function(err) {
-                    if(err) {
-                        console.log(err);
-                        throw err;
-                    }
-                });
+    fs.writeFile('/main', document.querySelector('#main').innerHTML, function(err) {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+    });
 
-                fs.writeFile('/cues', document.querySelector('#cues').innerHTML, function(err) {
-                    if(err) {
-                        console.log(err); 
-                        throw err; 
-                    }
-                });
+    fs.writeFile('/cues', document.querySelector('#cues').innerHTML, function(err) {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+    });
 
-                fs.writeFile('/summary', document.querySelector('#summary').innerHTML, function(err) {
-                    if(err) {
-                        console.log(err); 
-                        throw err; 
-                    }
-                });
-            }, 1000);
+    fs.writeFile('/summary', document.querySelector('#summary').innerHTML, function(err) {
+      if (err) {
+        console.log(err);
+        throw err;
+      }
+    });
+  }, 1000);
 
 
-        </script>
-    </body>
+</script>
+</body>
 </html>
