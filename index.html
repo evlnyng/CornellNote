@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <link href="https://fonts.googleapis.com/css?family=Gochi+Hand&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
         <title>Cornell Method Notetaking App</title>       
         <style>
             body {
@@ -49,7 +50,10 @@
             <button onclick="resetNote()">Clear</button>    
             <h1 id ="title" style="color: black;" contenteditable></h1>
         </div>
-
+        <div>
+            <button onclick="printPDF()">Print PDF</button>
+            <h1 id ="pdf" style="color: black;" contenteditable></h1>
+        </div>
         <div class="grid-container">
             <div id="cues" contenteditable></div>
             <div id="main" contenteditable></div>
@@ -89,9 +93,23 @@
                 
             });
 
+            function printPDF() {
+                // Default export is a4 paper, portrait, using milimeters for units
+              var doc = new jsPDF();
+              var textToPrint = `
+              Title: ${document.querySelector("#title").innerHTML} \n
+              Main: ${document.querySelector("#main").innerHTML} \n
+              Cues: ${document.querySelector("#cues").innerHTML} \n
+              Summary ${document.querySelector("#summary").innerHTML} \n
+              ~
+              `;
+              doc.text(textToPrint, 10, 10);
+              doc.save('CornellNote.pdf')
+            }
+
             function resetNote() {
                 document.querySelector("#title").innerHTML = ""; 
-                document.querySelector("#main").innerHTML = ""; 
+                document.querySelector("#main").innerHTML = "";
                 document.querySelector("#cues").innerHTML = "";
                 document.querySelector("#summary").innerHTML = "";
             }
