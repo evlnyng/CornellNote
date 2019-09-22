@@ -56,9 +56,47 @@
             <div id="summary" contenteditable></div>
         </div>
         <script src="https://unpkg.com/filer/dist/filer.min.js"></script>
+        <script src="https://unpkg.com/hotkeys-js/dist/hotkeys.min.js"></script>
         <script>
             const fs = new Filer.FileSystem();
 
+            //ctrl+q to close the current window
+            hotkeys('ctrl+q', function(){
+                save();
+                alert('Save key pressed!');
+            })
+
+            //ctrl+s to save current window
+            var save = function(){
+                fs.writeFile('/title', document.querySelector('#title').innerHTML, function(err) {
+                    if(err) {
+                        console.log(err);
+                        throw err;
+                    }
+                });
+
+                fs.writeFile('/main', document.querySelector('#main').innerHTML, function(err) {
+                    if(err) {
+                        console.log(err);
+                        throw err;
+                    }
+                });
+
+                fs.writeFile('/cues', document.querySelector('#cues').innerHTML, function(err) {
+                    if(err) {
+                        console.log(err); 
+                        throw err; 
+                    }
+                });
+
+                fs.writeFile('/summary', document.querySelector('#summary').innerHTML, function(err) {
+                    if(err) {
+                        console.log(err); 
+                        throw err; 
+                    }
+                });
+                alert('Document saved!')
+            }
             window.addEventListener('DOMContentLoaded', (event) => {
                 fs.readFile('/title', 'utf8', (err, data) => {
                     if(err) {
@@ -125,7 +163,6 @@
                     }
                 });
             }, 1000);
-
 
         </script>
     </body>
