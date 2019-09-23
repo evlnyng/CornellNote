@@ -60,13 +60,13 @@
         <script>
             const fs = new Filer.FileSystem();
 
-            //ctrl+q to close the current window
+            //ctrl+q to save current window
             hotkeys('ctrl+q', function(){
                 save();
                 alert('Save key pressed!');
             })
 
-            //ctrl+s to save current window
+            //save function to be used as part of save hotkey
             var save = function(){
                 fs.writeFile('/title', document.querySelector('#title').innerHTML, function(err) {
                     if(err) {
